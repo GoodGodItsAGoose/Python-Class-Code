@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Logger</title>
+        <link href="diffapp.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="descbkg">
+            <h2>What to jot down</h2>
+        </div>
+        <div class="break"></div>
+        <div class="entrybkg">
+            <h2>Input</h2>
+            <fieldset>
+                <label><input type="radio" id="text" name="text-checklist" value="text" onselect="txt.style.visibility='visible'">Text Entry</label>
+                <label><input type="radio" id="checklist" name="text-checklist" value="checklist" onselect="list.setattribute('visible', true)">Checklist Entry</fieldset></label>
+            </fieldset>
+
+            <input type="text" placeholder="Title of Entry" name="title" required>
+            <fieldset id="txt">
+                <input type="text" placeholder="Type entry here" name="textentry" id="txt" style="visibility:hidden">
+            </fieldset>
+            <fieldset id="list">
+                <h6 id="list" style="visibility:hidden">Mood</h6>
+                <label id="list" style="visibility:hidden"><input type="radio" id="list" name="list" value="list" style="visibility:hidden">Happy</label>
+            </fieldset>
+            <script>
+                function Checklist() {
+                    document.getelementbyid("list").style.visibility= 'visible'
+                    document.getelementbyid("txt").style.visibility= 'hidden'
+                }
+                function text() {
+                    document.getelementbyid("txt").style.visibility= 'visible'
+                    document.getelementbyid("list").style.visibility= 'hidden'
+                }
+
+            </script>
+            <button type="submit">Submit</button>
+        </div>
+    </body>
+</html>

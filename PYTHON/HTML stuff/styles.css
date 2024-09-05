@@ -1,0 +1,59 @@
+body {
+    width: 100%;
+    height: 100vh;
+    background-image: url(https://hips.hearstapps.com/hmg-prod/images/office-workplace-computer-with-white-blank-empty-royalty-free-image-1643387281.jpg?crop=1.00xw:0.755xh;0,0.125xh&resize=1200:*);
+  }
+  .survey {
+    margin: 0 auto;
+    width: 80%;
+    max-width: 1150px;
+    background-color: brown;
+    padding: 5 20 20 20;
+  }
+  
+  h1, p {
+      text-align: center;
+    }
+  p {
+  padding-bottom: 10px;
+  }
+  input, textarea, select {
+    margin: 5px 0 10px 0;
+    width: 100%;
+    min-height: 2em;
+    padding:2px;
+    font-family: Tahoma;
+  }
+  #otherclass, input.other {
+    display: none;
+  }
+  .inlineRadio {
+    width: unset;
+    margin: 0 0.5em 0 0;
+    vertical-align: middle;
+    display: inline;
+  }
+  .inline {
+    width: unset;
+    margin: 0 0.5em 0 0;
+    vertical-align: middle;
+    display: inline;
+    position: absoulte;
+  }
+  label {
+    display: block;
+    margin: 0.5rem 0;
+  }
+  fieldset {
+    margin: 10 0 0 0;
+  }
+  form {
+      max-width: 500px;
+      min-width: 300px;
+      margin: 0 auto;
+      padding-bottom: 2em;
+  }
+  legend {
+    font-family: Tahoma;
+  }
+  

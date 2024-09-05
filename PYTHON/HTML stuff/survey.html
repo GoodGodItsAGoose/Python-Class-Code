@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Class Enjoyment Survey</title>
+        <link href="styles.css" rel="stylesheet">
+    </head>
+    <body>
+        <form id="survey-form">
+        <div class="survey">
+            <h1 id="title">Class Enjoyment Survey</h1>
+            <p id="description">This survey is for tracking happiness with your chosen classes</p>
+            <form id="survey-form">
+                <fieldset id="survey-form">
+                    <label for="name" id="name-label">Name: <input type="text" id="name" placeholder="Bobby Jones" required></label>
+                    <label for="email" id="email-label">Email: <input type="email" id="email" placeholder="Simmerson.Class@gmail.com" required></label>
+                    <label for="number" id="number-label">Grade: <input type="number" id="number" min="1" max="12" placeholder="8" required></label>
+                    <label for="dropdown">Class: 
+                        <select id="dropdown" onchange="changeListener()" name="dropdown" required>
+                            <option value="">(Select One)</option>
+                            <option value="1">History Class</option>
+                            <option value="2">ELA</option>
+                            <option value="3">Math</option>
+                            <option value="4">Biology</option>
+                            <option value="5">Homeroom</option>
+                            <option value="6">Other</option>
+                        </select>
+                        <div id="otherclass">
+                        <label>Other class: <input type="text" class="other" placeholder="Baking & Pastries" style="display: block"></label>
+                        </div>
+                        <script>
+                            document.getElementById("dropdown").onchange = changeListener;
+                            
+                            function changeListener(){
+                            var value = this.value
+                            var other = document.getElementById("otherclass")
+                              
+                              if (value == "6"){
+                                other.style.display = "block"
+                              }else if(value !== "6"){
+                                other.style.display = "none"
+                              }
+                              
+                            }
+                          
+                          </script> <!-- Had to search the script and javascript code up and figure it out from there, I dont know javascript. -->
+                </fieldset>
+                <fieldset id="survey-form">
+                    <legend>Type of Entry</legend>
+                    <div id="choose">
+                    <label for="journal"><input type="radio" value="journal" id="journal" name="entry" class="inline" onclick="check()"checked>Journal</label>
+                    <label for="journal"><input type="radio" value="mood" id="mood" name="entry" class="inline" onclick="check()">Mood</label>
+                    </div>
+                <script>
+                    document.getElementById("journal").onclick = check;
+                    document.getElementById("mood").onclick = check2;
+                    
+                    function check2(){
+                    var x = document.getElementById("mood").value
+                    var choice = document.getElementById("choice")
+                    var choice2 = document.getElementById("choice2")
+                      console.log(x);
+                      if (x == "mood") {
+                            choice.style.display = "block"
+                            choice2.style.display = "none"
+                      }
+                    }
+                    
+                    function check(){
+                    var x = document.getElementById("journal").value
+                    var choice = document.getElementById("choice")
+                    var choice2 = document.getElementById("choice2")
+                      console.log(x);
+                      if (x == "journal") {
+                        choice.style.display = "none"
+                        choice2.style.display = "block"
+                      }
+                    }
+                  
+                   </script>
+                    <div id="choice" style="display:none">
+                        <legend>Mood Checkin</legend>
+                        <fieldset id="survey-form">
+                            <legend>How are you feeling?</legend>
+                            <form id="survey-form">
+                                <label for="happy"><input type="checkbox" id="happy" value="happy" class="inline" onclick="anythingChecked()"> Happy</label>
+                                <label for="upset"><input type="checkbox" id="upset" value="upset" class="inline" onclick="anythingChecked()"> Upset</label>
+                                <label for="angry"><input type="checkbox" id="angry" value="angry" class="inline" onclick="anythingChecked()"> Angry</label>
+                                <label for="annoyed"><input type="checkbox" id="annoyed" value="annoyed" class="inline" onclick="anythingChecked()"> Annoyed</label>
+                                <label for="confused"><input type="checkbox" id="confused" value="confused" class="inline" onclick="confusion()"> Confused</label>
+                                <label for="other"><input type=checkbox id="other" value ="other" class="inline" onclick="checkTrueFalseMood()"> Other</label>
+                            </form>
+                            <div id="other-div" style="display:none">
+                                <label>What are you feeling?
+                                    <input type="text" id="other-mood" name="other-mood" placeholder="Joyful">
+                                </label>
+                                <label for="bad-mood-check"><input type="radio" value="diffBadMood" name="diff-mood-check" id="bad-mood-check" class="inline" onclick="anythingChecked()"> Bad mood?</label>
+                                <label for="good-mood-check"><input type="radio" value="diffGoodMood" name="diff-mood-check" id="good-mood-check" class="inline" onclick="anythingChecked()"> Good mood?</label>
+                                <label for="neutral-mood-check"><input type="radio" value="diffNeutralMood" name="diff-mood-check" id="neutral-mood-check" class="inline" onclick="closeCheck()"> Neutral mood?</label>
+                            </div>
+                            <script>
+                                var annoyedMoodCheck = document.getElementById("annoyed")
+                                var angryMoodCheck = document.getElementById("angry")
+                                var upsetMoodCheck = document.getElementById("upset")
+                                var goodMoodCheck = document.getElementById("good-mood-check")
+                                var badMoodCheck = document.getElementById("bad-mood-check")
+                                var happyMoodCheck = document.getElementById("happy")
+                                var confusedCheck = document.getElementById("confused")
+
+                                /*checking functions*/
+                                function anythingChecked() {
+                                    if (annoyedMoodCheck.checked || angryMoodCheck.checked || upsetMoodCheck.checked || badMoodCheck.checked) {
+                                        console.log("checking bad")
+                                        badMood.call()
+                                    } else if (!annoyedMoodCheck.checked && !angryMoodCheck.checked && !upsetMoodCheck.checked && !badMoodCheck.checked) {
+                                        console.log("checking bad close")
+                                        badMoodClose.call()
+                                    }
+                                    if (happyMoodCheck.checked || goodMoodCheck.checked) {
+                                        console.log("checking good")
+                                        goodMood.call()
+                                    } else if (!happyMoodCheck.checked && !goodMoodCheck.checked) {
+                                        console.log("checking good closed")
+                                        goodMoodClose.call()
+                                    }
+                                    if (confusedCheck.checked) {
+                                        console.log("Confused open")
+                                        confusedOpen()
+                                    } else if (!confusedCheck.checked) {
+                                        console.log("confused closed")
+                                        confusedClose()
+                                    }
+
+                                }
+
+                                function checkTrueFalseMood() {
+                                    var moodCheck = document.getElementById("other")
+                                    if (moodCheck.checked) {
+                                        otherExtra.call()
+                                        console.log("open works")
+                                    } else if(!moodCheck.checked) {
+                                        otherExtraClose.call()
+                                        console.log("close works")
+                                    }
+                                }
+
+                                /*closing and opening functions*/
+                                function badMood() {
+                                    var badMoodDiv = document.getElementById("bad-div")
+                                    badMoodDiv.style.display = 'block'
+                                }
+
+                                function badMoodClose() {
+                                    var badMoodDiv = document.getElementById("bad-div")
+                                    badMoodDiv.style.display = 'none'
+                                }
+
+                                function goodMood() {
+                                    var goodMoodDiv = document.getElementById("good-div")
+                                    goodMoodDiv.style.display = 'block'
+                                }
+
+                                function goodMoodClose() {
+                                    var goodMoodDiv = document.getElementById("good-div")
+                                    goodMoodDiv.style.display = 'none'
+                                }
+
+                                function confusedOpen() {
+                                    var confusedDiv = document.getElementById("conf-div")
+                                    confusedDiv.style.display = 'block'
+                                }
+                                function confusedClose() {
+                                    var confusedDiv = document.getElementById("conf-div")
+                                    confusedDiv.style.display = 'none'
+                                }
+
+                                function otherExtra() {
+                                    var otherDiv = document.getElementById("other-div")
+                                    otherDiv.style.display = 'block'
+                                }
+                                function otherExtraClose() {
+                                    var otherDiv = document.getElementById("other-div")
+                                    otherDiv.style.display = 'none'
+                                }
+
+                                /*neutral mood check closing func*/
+                                function closeCheck() {
+                                    if (!happyMoodCheck.checked && !goodMoodCheck.checked) {
+                                        goodMoodClose.call()
+                                    }
+                                    if (!annoyedMoodCheck.checked && !angryMoodCheck.checked && !upsetMoodCheck.checked && !badMoodCheck.checked) {
+                                        badMoodClose.call()
+                                    }
+                                }
+                                </script>
+                            </fieldset>
+                        <div id="good-div" style="display:none">
+                            <fieldset id="survey-form">
+                                <label>What made you happy?<textarea id="good-mood-text" name="good-mood-check" rows="3" cols="30" placeholder="I found a 20 dollar bill on the side walk!"></textarea></label>
+                            </fieldset>
+                        </div>
+                        <div id="bad-div" style="display:none">
+                            <fieldset id="survey-form"> <!--add if bad mood-->
+                                <p>Was it School, Schoolwork, A classmate, or something unrelated that got you into this mood?</p>
+                                <label for="school"><input type="checkbox" id="school" value="1" class="inline"> School</label>
+                                <label for="schoolwork"><input type="checkbox" id="schoolwork" class="inline" value="2"> Schoolwork</label>
+                                <label for="classmate"><input type="checkbox" id="classmate" class="inline" value="3"> Classmate</label>
+                                <label for="else"><input type="checkbox" id="else" value="4" class="inline" onclick="checkTrueFalse()"> Something else</label>
+                                <div id="elab" style="display:none">
+                                    <label for="elaboration">What Happened?<textarea id="elaboration" name="elaboration" rows="3" cols="30" placeholder="I lost my phone and..."></textarea></label>
+                                </div>
+                                <script>
+                                    function checkTrueFalse() {
+                                        if (document.getElementById("else").checked) {
+                                            unrelatedElaboration.call();
+                                        } else if (!document.getElementById("else").checked) {
+                                            unrelatedElaborationClose.call();
+                                        }
+                                    }
+
+                                    function unrelatedElaborationClose() {
+                                        var elab = document.getElementById("elab")
+                                        elab.style.display = "none"
+                                    }
+
+                                    function unrelatedElaboration() {
+                                        var elab = document.getElementById("elab")
+                                        elab.style.display = 'block'
+                                    }
+
+                                </script>
+                            </fieldset>
+                            <fieldset id="survey-form">
+                                <label for="wish-happened">What do you wish could have happened? What do you think would have changed?<textarea id="wish-happened" name="wish-happened" rows="5" cols="50" placeholder="I wish ... had happened"></textarea></label>
+                            </fieldset>
+                            <div id="conf-div" style="display:none">
+                                <label for="confused-about">What are you confused about?<textarea id="confused-abt" name="confused-abt" rows="5" cols="50" placeholder="I got confused by ... in science"></textarea></label> <!--add later on search results to answer question-->
+                            </div>
+                        </div>
+                        <label>Extra Notes<textarea id="notes" name="notes" rows="3" cols="3" placeholder="Homework due tomorrow!"></textarea></label>
+                    </div>
+                    <div id="choice2" style="display:block">
+                        <legend>Journal Entry</legend>
+                        <label for="journaling"><textarea id="journaling" name="journaling" rows="5"cols ="50" placeholder="Today in class..."></textarea></label>
+                    </div>
+                    <input type="submit" id="submit" value="Submit" />
+                </fieldset> <!--add later on a way to revisit entries-->
+            </form>
+        </div>
+        </form>
+    </body>
+</html>
+
+

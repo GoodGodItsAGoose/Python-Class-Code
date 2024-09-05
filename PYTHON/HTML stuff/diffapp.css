@@ -1,0 +1,22 @@
+body {
+    background-image: url(C:/Users/BuckminsterHayes-McQ/Downloads/wood.jpg);
+    font-family:sans-serif;
+    padding: 25px;
+    }
+    title, h1, h2 {
+        font-family:'Courier New', Courier, monospace;
+        text-align: center;
+    }
+    .descbkg, .entrybkg {
+        width: 60%;
+        background-color: rgb(156, 111, 68); /* https://www.color-hex.com/color-palette/59945 */
+        margin-left: auto;
+        margin-right: auto;
+        padding: 20px;
+        max-width: 1500px;
+    }
+    
+    .break {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
