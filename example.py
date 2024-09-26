@@ -1,7 +1,7 @@
 class DnD_Char_Maker:
     def __init__(
         self, name, age, gender, race, eyeColor, skinColor, hairColor, hairStyle, height, noseShape, lipShape,
-        bodyType, favHobbies, favColor, favAesthetic
+        bodyType
         ):
         self.name = name
         self.age = age
