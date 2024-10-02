@@ -134,12 +134,12 @@ while accountDone == False:
     accountType = input()
     if int(accountType) == 1:
         accountDone = True
-        savingsAccount.startUpSavings(self=account1) #wont work, ask why
         account1 = savingsAccount(0, random.randint(1000000000, 999999999999), name)
+        savingsAccount.startUpSavings(self=account1) #wont work, ask why
     elif int(accountType) == 2:
         accountDone = True
-        checkingsAccount.startUpCheckings(self=account1)
         account1 = checkingsAccount(0, random.randint(1000000000, 999999999999), name)
+        checkingsAccount.startUpCheckings(self=account1)
     else:
         print("Please re-enter choice.")
         accountDone = False
