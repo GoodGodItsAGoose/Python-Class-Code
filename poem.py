@@ -1,0 +1,17 @@
+file1 = open('poem.txt', 'w')
+
+file1.write("Chat GPT didn't write this. ")
+file1.write("I did. ")
+file1.write("But, what if Chat GPT did write this? ")
+file1.write("Who would know? ")
+file1.write("Who could tell? ")
+file1.write("Surely not... ")
+file1.write("It couldn't be! ")
+file1.write("Is it true? ")
+file1.write("Did he write this? ")
+file1.write("No... ")
+file1.write("I know who wrote this, so... ")
+file1.close()
+
+file2 = open('poem.txt', 'r')
+print(file2.read())
