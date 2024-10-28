@@ -124,7 +124,6 @@ def contactRunThru(userInput, x):
             print(contact2)
             print(contact)
             print("/")
-            print("Continuing further")
             ##Removes spaces at the beginning and end of the string
             ##Checks to see if the values inside are equal to the user input
             if "back" in userInput:
