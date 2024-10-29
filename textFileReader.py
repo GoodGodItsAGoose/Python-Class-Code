@@ -6,13 +6,13 @@ def uploadFile():
     else:
         file = file+".txt"
     try: 
-        open(f"texts\{file}" , 'r', encoding='UTF-8')
+        open(f"texts/{file}" , 'r', encoding='UTF-8')
     except:
         UnicodeDecodeError
         print("File not found. Please try again.")
         fileReader()
     else:
-        with open(f"texts\{file}" , 'r', encoding='UTF-8') as f:
+        with open(f"texts/{file}" , 'r', encoding='UTF-8') as f:
             return f.read()
 
 def fileReader():
