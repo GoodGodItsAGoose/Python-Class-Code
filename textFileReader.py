@@ -1,10 +1,39 @@
+from pathlib import Path
+import json
 def uploadFile():
-    file = input("Please enter the file name you've uploaded: ")
-    if ".txt" in file:
-        print()
-    else:
-        file = file+".txt"
-    #checks to see if file name will work
+    file = input("Please enter the file name you've uploaded, or type 'history' to see previous entries: ")
+    with open("fileNames.txt", "r") as f:
+        if "history" in file.lower():
+            clear = input("Would you like to clear your history? THIS ACTION CAN NOT BE UNDONE (Y/N): ")
+            if "y" in clear.lower():
+                #sets the fileNames.txt to a blank
+                p = ""
+                path = Path("fileNames.txt")
+                #overrides text writen to clear the history
+                path.write_text(p)
+                print("Cleared History.")
+                #reruns to the beginning of the menu function
+                fileReader()
+            elif "n" in clear.lower():
+                with open("fileNames.txt", 'r') as f:
+                    if f == "":
+                        print("No history found.")
+                    else:
+                        print(f.read())
+                    
+                    fileReader()
+        elif file not in f:
+            #adds .txt to the end if .txt was missing so the opening of the file works
+            if ".txt" in file.lower():
+                # placeHolderString just so the if statment is valid
+                placeHolderString = None
+            else:
+                file = file+".txt"
+            with open("fileNames.txt", "a") as f:
+                json.dump(file, f)
+                f.write("\n")
+                f.close()
+    # checks to see if file name will work
     try: 
         open(f"texts/{file}" , 'r', encoding='UTF-8')
     except:
@@ -38,6 +67,5 @@ def fileReader():
         exitChoice()
     else:
         exitChoice()
-        
         
 fileReader()
