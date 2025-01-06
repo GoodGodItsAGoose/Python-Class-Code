@@ -1,0 +1,262 @@
+import random as r
+import littleHelpers as lh
+
+item_amount = r.randint(1,4)
+
+starters = {
+    1: {1: "I need ", 2: "I would like ", 3: "Please give me "},
+    2: {1: "A ", 2: "Some "},
+    3: {1: "And "},
+    4: {1: " with "}
+}
+
+food = {
+    1: {1: "single burger", 2: "double burger", 3: "bacon burger"},
+    2: {1: "chicken sandwich", 2: "grilled cheese", 3: "hotdog"},
+    3: {1: "french fries", 2: "onion rings", 3: "chicken nuggets", 4: "garden salad", 5: "chicken wings", 6: "motzarella sticks", 7: "brownie delight", 8: "cookie madness"},
+    4: {1: "fountain drink", 2: "milkshake"},
+    5: {1: "ice cream"}
+}
+
+toppings = {
+    1: {1: "pickles", 2: "lettuce", 3: "cheese", 4: "onions", 5: "tomatoes"},
+    2: {1: "ranch", 2: "caesar", 3: "balsamic"},
+    3: {1: "whipped cream", 2: "a cherry"},
+    4: {1: "BBQ ", 2: "buffalo "}
+}
+
+flavors = {
+    1: "vanilla",
+    2: "chocolate",
+    3: "strawberry"
+}
+
+def order_to_order(order_choice):
+    order = input("Input order: ")
+    if "bb" in order or "db" in order or "sb" in order or "cs" in order:
+        num2 = 1
+        lists = topping_stuff(num2)
+        toppings_available = topping_stuff_2(num2)
+        burgers = food[1]
+        cs = food[2]
+        num = 1
+        is_it_okay = []
+        for _ in range(4):
+            if num == 4:
+                order_choice = find_in_order(order_choice, cs[1])
+            else:
+                order_choice = find_in_order(order_choice, burgers[num])
+            num += 1
+        num = 0
+        for _ in range(len(toppings_available)-1):
+            if str(lists[num]) in order:
+                num3 = 0
+                for _ in len(order_choice):
+                    if toppings_available[lists[num]] in order_choice[num3]:
+                        is_it_okay.append(True)
+                    num3 += 1
+                is_it_okay.append(True)
+            else:
+                num += 1
+        print(is_it_okay)
+    elif "gs" in order_choice:
+        dressing = toppings[4]
+        num = 1
+        for _ in range(2):
+            if dressing[num] in order_choice and dressing[num] in order:
+                print(True)
+                if "chicken" in order_choice and "chicken" in order:
+                    print(True) 
+                elif "chicken" in order_choice and "chicken" not in order:
+                    print(False)
+            elif dressing[num] in order_choice and dressing[num] not in order:
+                print(False)
+            else:
+                num += 1
+                
+def find_in_order(order, var_to_find):
+    num = 0
+    for _ in len(order):
+        if var_to_find == order[num]:
+            return num
+        else:
+            num += 1
+    
+def topping_stuff(num2):
+    topping = toppings[num2]
+    listies = []
+    num = 1
+    for _ in (range(len(topping))):
+        listies.append(num)
+        num += 1
+    return listies
+
+def topping_stuff_2(num2):
+    topping = toppings[num2]
+    listies = []
+    num = 1
+    for _ in (range(len(topping))):
+        listies.append(topping[num])
+        num += 1
+    return listies
+
+# chooses food
+def foodChoice():
+    food_type = r.randint(1,5)
+    foods = food[food_type]
+    food_amount = len(food[food_type])
+    food_choice = foods[r.randint(1, int(food_amount))]
+    return food_choice
+
+# choosing flavors for milkshake/ice cream
+def flavor():
+    flavor = flavors[r.randint(1,3)]
+    return flavor
+
+# gets toppings for burgers
+def toppings_for_burgers():
+    amount = r.randint(1,5)
+    topping_list = []
+    toppings_available = toppings[1]
+    num = []
+    for _ in range(amount):
+        check_toppings(num)
+    num1 = 0
+    for _ in range(amount):
+        topping_list.append(toppings_available[num[num1]])
+        num1 += 1
+    new_list = []
+    num = 1
+    length = len(topping_list) - 1
+    num2 = 0
+    # making the topping choices into a sentence
+    new_list.append(" with ")
+    new_list.append(topping_list[0])
+    for _ in range(length):
+        if num2 == length - 1:
+            new_list.append(" and ")
+        else:
+            new_list.append(", ")
+        new_list.append(topping_list[num])
+        num += 1
+        num2 += 1
+    # turning the list into a string
+    listy = new_list
+    sentence = ''.join(listy)
+    return(sentence)
+
+# checking if toppings appear more than once
+def check_toppings(list):
+    num2 = r.randint(1,5)
+    if lh.runThroughList(list, num2) == True:
+        check_toppings(list)
+    else:
+        list.append(num2)
+
+# chooses dressing for salad
+def dressing_for_salad():
+    choice = r.randint(1,3)
+    dressing = toppings[2]
+    dressing_chosen = dressing[choice]
+    return dressing_chosen
+        
+# chooses toppings for milkshake
+def toppings_for_milkshake():
+    choice = r.randint(1,2)
+    topping = toppings[3]
+    if choice == 1:
+        topping_choice = " "+ topping[r.randint(1,2)]
+        return topping_choice
+    else:
+        topping_choice = " with whipped cream and a cherry"
+        return topping_choice 
+
+# changing 'a' to 'some' when it makes sense
+def a_to_some(food_chosen):
+    if food_chosen == "onion rings" or food_chosen == "french fries" or food_chosen == "chicken wings" or food_chosen == "motzarella sticks":
+        num = "some "
+    else:
+        num = "a "
+    return num
+
+def y_or_n():
+    yorn = r.randint(1,2)
+    if yorn == 1:
+        return True
+
+def replacing(sentence):
+    blah = sentence
+    blah = blah.replace("with", "")
+    blah = blah.replace(",", "")
+    blah = blah.replace("and", "")
+    blah = blah.replace("  ", " ")
+    return blah
+
+# sorting and printing order
+def order_up():
+    count = 1
+    num = 0
+    blah_list = []
+    for _ in range(item_amount):
+        food_chosen = foodChoice()
+        flavor_choice = ""
+        topping_choice = ""
+        if food_chosen == "ice cream":
+            flavor_choice = flavor() + " "
+            if y_or_n() == True:
+                topping_choice = " in a cup"
+        elif "wings" in food_chosen:
+            sauces = toppings[4]
+            flavor_choice = sauces[r.randint(1,2)]
+        elif "burger" in food_chosen or food_chosen == "chicken sandwich":
+            if y_or_n() == True:
+                topping_choice = toppings_for_burgers()
+        elif food_chosen == "milkshake":
+            flavor_choice = flavor() + " "
+            topping_choice = toppings_for_milkshake()
+        elif food_chosen == "french fries" or food_chosen == "nachos":
+            yncheese = r.randint(1,2)
+            if y_or_n() == True:
+                topping_choice = " with cheese"
+        elif food_chosen == 'garden salad':    
+            ynchicken = r.randint(1,2)
+            if ynchicken == 1:
+                topping_choice = " with chicken"
+            flavor_choice = dressing_for_salad() + " "
+        if count == 1:
+            num = a_to_some(food_chosen)
+            choice = r.randint(1,3)
+            # start of order
+            start = starters[1]
+            print(start[choice] + num + flavor_choice + food_chosen + topping_choice + ".")
+            blah = start[choice] + num + " " + flavor_choice + food_chosen + topping_choice + "."
+            blah = replacing(blah)
+            blah = blah.replace(num, "")
+            blah = blah.replace(start[choice], "")
+            blah_list.append(blah)
+        elif count == item_amount:
+            num = a_to_some(food_chosen)
+            # end of order
+            start = starters[3]
+            print(start[1] + num + flavor_choice + food_chosen + topping_choice + ".")
+            blah = start[1] + num + " " + flavor_choice + food_chosen + topping_choice + "."
+            blah = replacing(blah)
+            blah = blah.replace(num, "")
+            blah = blah.replace(start[1], "")
+            blah_list.append(blah)
+        elif count != 1:
+            num = a_to_some(food_chosen)
+            # middle of order
+            print(num.capitalize() + flavor_choice + food_chosen + topping_choice + ".")
+            blah = num.capitalize() + num + " " + flavor_choice + food_chosen + topping_choice + "."
+            blah = replacing(blah)
+            blah = blah.replace(num, "")
+            blah = blah.replace(num.capitalize(), "")
+            blah_list.append(blah)
+        
+        
+            
+        count += 1
+    order_to_order(blah_list)
+    return blah_list
+order_up()
