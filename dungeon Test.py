@@ -1,134 +1,109 @@
 import random
-
-enemy = {
-    "undead": {"health": random.randint(23,30), "damage": random.randint(2,5), "dodge chance": 13, "double hit chance": 3, "drops": random.randint(1,3), "chance drops": random.randint(1,3)},
-    "bandit": {"health": random.randint(17, 25), "damage": random.randint(4,7), "dodge chance": random.randint(10,23), "double hit chance": random.randint(12,17), "drops": random.randint(2,4), "chance drops": random.randint(1,3)}, 
-    "snake": {"health": random.randint(7,15), "damage": random.randint(1,3), "dodge chance": 35, "double hit chance": 18, "drops": random.randint(1,2), "chance drops": random.randint(1,2)},
-    "undead guard": {"health": random.randint(27,35), "damage": random.randint(6,11), "dodge chance": 17, "double hit chance": random.randint(11,15), "drops": random.randint(4,6), "chance drops": random.randint(1,3)},
-    "giant spider": {"health": random.randint(13,20), "damage": random.randint(3,6), "dodge chance": random.randint(24,34), "double hit chance": random.randint(11,18), "drops": random.randint(2,4), "chance drops": random.randint(1,3)},
-    "giant armored spider": {"health": random.randint(17,26), "damage": random.randint(3,7), "dodge chance": random.randint(19,31), "double hit chance": random.randint(11,16), "drops": random.randint(2,5), "chance drops": random.randint(1,3)},
-    "goblin": {"health": random.randint(13,17), "damage": random.randint(2,5), "dodge chance": random.randint(13,23), "double hit chance": random.randint(13,16), "drops": random.randint(1,3), "chance drops": random.randint(1,2)},
-    "wizard": {"health": random.randint(36,44), "damage": random.randint(7,14), "dodge chance": random.randint(13,16), "double hit chance": random.randint(11,15), "drops": random.randint(5,7), "chance drops": random.randint(1,3)},
-    "King's Guard": {"health": random.randint(45,53), "damage": random.randint(13,17), "dodge chance": random.randint(3,7), "double hit chance": random.randint(11,15), "drops": random.randint(7,9), "chance drops": random.randint(1,3)},
-}
+import littleHelpers as lh
 
 #player statistics
 playerStats = {
-    "stats": {"hp": 40, "damage": random.randint(4,6), "dodge chance": 20, "double hit chance": 16},
+    "stats": {"hp": 40, "damage": random.randint(4,8), "dodge chance": 20, "double hit chance": 16},
     "used weapon": {"hand"},
     "stored weapons":{"hand"},
     "money": {"coins": 0},
-    "potions": {"damage": 1000, "dodge": 325, "health up": 44610, "restoration": 3}
+    "potions": {"damage": 0, "dodge": 0, "restoration": 5},
+    "ups": {"damage up": 0, "dodge up": 0}
 }
-
-weapons = {
-    "Dagger": {"damage": 4, "speed": 7, "durablity": 7, "special": 1},
-    "Iron Sword": {"damage": 6, "speed": 3, "durability": 16, "special": 3},
-    "Katana": {"damage": 5, "speed": 6, "durability": 14, "special": 4},
-    "Lead Pike": {"damage": 5, "speed": 3, "durability": 11, "special": 2},
-    "Staff": {'damage': 3, 'speed': 6, 'durability': 9, 'special': 5},
-    "Rapier": {'damage': 6, 'speed': 5, 'durability': 11, 'special': 4},
-    "none": {"damage": 0, "speed": 0, "durability": 99999999999, "special": 1}
-}
-weaponNames = ["Dagger", "Iron Sword", "Katana", "Lead Pike", "Staff", "Rapier"]
-weaponNamesLower = ["dagger", "sword", 'katana', 'pike', 'staff', 'rapier']
-potionNames = ["Damage Up Potion", "Dodge Up Potion", "Health Up Potion", "Restoration Potion"]
-potionCosts = [5, 4, 8, 5]
-weaponCosts = [10, 25, 30, 20, 15, 35]
-
-baddie = random.randint(1, 9)
-
-if baddie == 1:
-    baddieOne = enemy["undead"]
-    baddieName = "Zombie"
-elif baddie == 2:
-    baddieOne = enemy["bandit"]
-    baddieName = "Bandit"
-elif baddie == 3:
-    baddieOne = enemy["snake"]
-    baddieName = "Snake"
-elif baddie == 4:
-    baddieOne = enemy["undead guard"]
-    baddieName = "Undead Guard"
-elif baddie == 5:
-    baddieOne = enemy["giant spider"]
-    baddieName = "Giant Spider"
-elif baddie == 6:
-    baddieOne = enemy["giant armored spider"]
-    baddieName = "Giant Armored Spider"
-elif baddie == 7:
-    baddieOne = enemy["goblin"]
-    baddieName = "Goblin"
-elif baddie == 8:
-    baddieOne = enemy["wizard"]
-    baddieName = "Wizard"
-elif baddie == 9:
-    baddieOne = enemy["King's Guard"]
-    baddieName = "King's Guard"
 
 playerHealth = playerStats["stats"]
 playerDamage = playerStats["stats"]
 playerDodge = playerStats["stats"]
 playerDoubleHitRate = playerStats["stats"]
-playerPotions = playerStats["potions"]
+playePotions = playerStats["potions"]
+playerBoosts = playerStats["ups"]
+
+potionNames = ["Damage Up Potion", "Dodge Up Potion", "Restoration Potion"]
+potionNamesReal = ["damage", "dodge", "restoration"]
+potionChances = [35, 65, 90, 10]
+
+
+
+# out of num of options, each have different percentages of probability of occurring
+
+def findAPotion(chance=1):
+    amount = random.randint(1,chance)
+    potion_type = random.randint(0,2)
+    num = 0
+    for _ in range(4):
+        if potion_type == num:
+            playePotions[potionNamesReal[potion_type]] += amount
+            if amount == 1:
+                return f"{amount} {potionNames[potion_type]}"
+            elif amount != 1:
+                return f"{amount} {potionNames[potion_type]}s"
+        num += 1
+
+playerBoosts["damage up"] = 0
+playerBoosts["dodge up"] = 0
+
+
+
 
 yes = ["yes" or "yep" or "yup" or "okay" or "sure" or "y"]
 no = ["no" , "back" , "leave" , "exit" , "n", "none"]
 
-def dungeon():
-    print("u did a dungeon")
-
-damageBoost = 0
-dodgeBoost = 0
-weaponsChosen = [random.randint(1,2), random.randint(3,4), random.randint(5,6)]
-potionChoice = random.randint(1,3)
-def weaponChecker(x, y):
-    if weaponsChosen[x] == y:
-        return y - 1
-    else:
-        return y
-        
-w1 = weaponChecker(0, 1)
-w2 = weaponChecker(1, 3)
-w3 = weaponChecker(2, 5)
-print(w3)
-
-def buyFunc(x, price):
-    print(f'You wanted to buy the {x}, correct?')
-    playerChoice = input("")
-    if str(yes) in playerChoice.lower():
-        print(f"Alright. That'll be {price} coins.")
-        print("You hand over the coins.")
-        playerStats["stored weapons"] == playerStats["stored weapons"], weapons[x]
-        # if playerStats["stored weapons"] and playerStats["used weapon"] == "hand":
-        #   pass
-        # else:
-        #   print("Would you like to equip a weapon?")
-    elif str(no) in playerChoice.lower():
-        print("alright.")
-        shop()
-    else:
-        print("Please re-enter choice.")
-        buyFunc(x, price)
-        
-def shop():
-    print(f"Welcome to the shop. Right now we have {weaponNames[w1]}s, {weaponNames[w2]}s, {weaponNames[w3]}s, {potionNames[potionChoice]}s and {potionNames[3]}s for sale.")
-    print("Which would you like to buy?")
-    playerChoice = input("")
-    if str(no) in playerChoice.lower():
-        print("Alright. Good day to you.")
-        #go back to the main menu
-    elif weaponNames[w1].lower() in playerChoice.lower():
-        buyFunc(weaponNames[w1], weaponCosts[w1])
-    elif weaponNames[w2].lower in playerChoice.lower():
-        buyFunc(weaponNames[w2], weaponCosts[w2])
-    elif weaponNames[w2].lower in playerChoice.lower():
-        buyFunc(weaponNames[w3], weaponCosts[w3])
-    elif potionNames[potionChoice].lower() in playerChoice.lower():
-        buyFunc(potionNames[potionChoice], potionCosts[potionChoice])
-
         
 def dungeonRun():
+    enemy = {
+        "undead": {"health": random.randint(23,30), "damage": random.randint(2,5), "dodge chance": 13, "double hit chance": 3, "chance drops": random.randint(1,3), "chance": 16},
+        "bandit": {"health": random.randint(17, 25), "damage": random.randint(4,7), "dodge chance": random.randint(10,23), "double hit chance": random.randint(12,17), "chance drops": random.randint(1,3), "chance": 30}, 
+        "snake": {"health": random.randint(7,15), "damage": random.randint(1,3), "dodge chance": 35, "double hit chance": 18, "chance drops": random.randint(1,2), "chance": 45},
+        "undead guard": {"health": random.randint(27,35), "damage": random.randint(6,11), "dodge chance": 17, "double hit chance": random.randint(11,15), "chance drops": random.randint(1,3), "chance": 57},
+        "giant spider": {"health": random.randint(13,20), "damage": random.randint(3,6), "dodge chance": random.randint(24,34), "double hit chance": random.randint(11,18), "chance drops": random.randint(1,3), "chance": 68},
+        "giant armored spider": {"health": random.randint(17,26), "damage": random.randint(3,7), "dodge chance": random.randint(19,31), "double hit chance": random.randint(11,16), "chance drops": random.randint(1,3), "chance": 77},
+        "goblin": {"health": random.randint(13,17), "damage": random.randint(2,5), "dodge chance": random.randint(13,23), "double hit chance": random.randint(13,16), "chance drops": random.randint(1,2), "chance": 90},
+        "wizard": {"health": random.randint(36,44), "damage": random.randint(7,14), "dodge chance": random.randint(13,16), "double hit chance": random.randint(11,15), "chance drops": random.randint(1,3), "chance": 97},
+        "King's Guard": {"health": random.randint(45,53), "damage": random.randint(13,17), "dodge chance": random.randint(3,7), "double hit chance": random.randint(11,15), "chance drops": random.randint(1,3), "chance": 100},
+    }
+    baddie = random.randint(1, 100)
+
+
+
+    if lh.between(baddie, 1, enemy["undead"]["chance"]) ==  True:
+        baddieOne = enemy["undead"]
+        baddieName = "Zombie"
+        drops = 1
+    elif lh.between(baddie, enemy["undead"]["chance"]+1, enemy["bandit"]['chance']) == True:
+        baddieOne = enemy["bandit"]
+        baddieName = "Bandit"
+        drops =  2
+    elif lh.between(baddie, enemy["bandit"]["chance"]+1, enemy["snake"]['chance']) == True:
+        baddieOne = enemy["snake"]
+        baddieName = "Snake"
+        drops = 1
+    elif lh.between(baddie, enemy["snake"]["chance"]+1, enemy["undead guard"]['chance']) == True:
+        baddieOne = enemy["undead guard"]
+        baddieName = "Undead Guard"
+        drops = 3
+    elif lh.between(baddie, enemy["undead guard"]["chance"]+1, enemy["giant spider"]['chance']) == True:
+        baddieOne = enemy["giant spider"]
+        baddieName = "Giant Spider"
+        drops = 2
+    elif lh.between(baddie, enemy["giant spider"]["chance"]+1, enemy["giant armored spider"]['chance']) == True:
+        baddieOne = enemy["giant armored spider"]
+        baddieName = "Giant Armored Spider"
+        drops = 3
+    elif lh.between(baddie, enemy["giant armored spider"]["chance"]+1, enemy["goblin"]['chance']) == True:
+        baddieOne = enemy["goblin"]
+        baddieName = "Goblin"
+        drops = 2
+    elif lh.between(baddie, enemy["goblin"]["chance"]+1, enemy["wizard"]['chance']) == True:
+        baddieOne = enemy["wizard"]
+        baddieName = "Wizard"
+        drops = 3
+    elif lh.between(baddie, enemy["wizard"]["chance"]+1, enemy["King's Guard"]['chance']) == True:
+        baddieOne = enemy["King's Guard"]
+        baddieName = "King's Guard"
+        drops = 4
+
+    print(f"You came across a {baddieName}!")
+
     dungeonGoing = True
     while dungeonGoing == True:
         def potionChecker(ones, twos):
@@ -136,7 +111,13 @@ def dungeonRun():
                 twos -=  1
                 print(f"You drank 1 {ones}! You have {twos} {ones}s left!")
                 return twos
-            else: print(f"You're out of {ones}s!")
+            else: 
+                print(f"You're out of {ones}s!")
+        
+        def potionOut(potionName):
+            if playePotions[potionName] == 0:
+                return False
+            return True
         
         def enemyAttack(b):
             dodgeChance = random.randint(1,100)
@@ -149,7 +130,6 @@ def dungeonRun():
                         playerHealth['hp'] = 0
                         print(f"The {baddieName} hit you for {baddieOne['damage']} hp! You died!")
                         playerHealth['hp'] = 40
-                        dungeonGoing = False
                         exit()
                     else:
                         print(f"The {baddieName} hit you for {baddieOne['damage']} hp! You have {playerHealth['hp']} hp left!")
@@ -163,10 +143,10 @@ def dungeonRun():
                     baddieOne['health'] -= playerDamage['damage'] + a
                     if baddieOne['health'] <= 0:
                         baddieOne['health'] = 0
-                        print(f'You killed the {baddieName}! You got {baddieOne['drops']} gold coins!')
+                        drop = findAPotion(drops)
+                        print(f'You killed the {baddieName}! You got {drop}!')
                         playerHealth['hp'] = 40
-                        dungeonGoing = False
-                        exit()
+                        dungeonRun()
                     else:
                         print(f"You hit the {baddieName} for {playerDamage['damage']} hp! It now has {baddieOne['health']} hp left!")
 
@@ -174,50 +154,53 @@ def dungeonRun():
             if playerHealth['hp'] <= 15:
                 print("Would you like to drink a health potion?")
                 playerChoice = input("")
-                if str(yes) in playerChoice.lower():
+                if "yes" or "y" in playerChoice.lower():
                     restor = random.randint(5,15)
+                    if restor >= 13:
+                        restor += random.randint(0,5)
                     playerHealth['hp'] += restor
                     print(f"You restored {restor} hp! You now have {playerHealth['hp']} hp!")
+                    playePotions['restoration'] = potionChecker("Restoration Potion", playePotions['restoration'])
 
         def dungeonCheckIn():
-            print("What would you like to do?")
+            print("What would you like to do? You can drink a potion or attack.")
             playerChoice = input("")
-            if ("health" or "drink") or (("potion" or "hp") or ("dodge" or "restor")) in str(playerChoice).lower(): #wont allow u to attack
-                print(f"You have {playerPotions["damage"]} Damage Up potions, {playerPotions["dodge"]} Dodge Chance Up potions, {playerPotions["health up"]} Health Up potions, and {playerPotions["restoration"]} Restoration potions.")   
-                print("Which potion would you like to drink?")
+            playerBoosts["damage up"] = 0
+            playerBoosts["dodge up"] = 0
+            if "drink" in str(playerChoice).lower(): #wont allow u to attack
+                print(f"You have {playePotions["damage"]} Damage Up potions, {playePotions["dodge"]} Dodge Chance Up potions, and {playePotions["restoration"]} Restoration potions.")   
+                print("Which potion would you like to drink? Note that boosting potions last for 1 attack.")
                 playerChoice = input("")
                 if "damage" in playerChoice.lower():
-                    damageBoost = random.randint(3,6)
-                    print("You boosted your damage by "+str(damageBoost)+" points!")
-                    playerPotions['damage'] = potionChecker("Damage Potion", playerPotions['damage'])
+                    if potionOut(potionNamesReal[0]) == True:
+                        playerBoosts["damage up"] = random.randint(3,6)
+                        print("You boosted your damage by "+str(playerBoosts["damage up"])+" points!")
+                    playePotions['damage'] = potionChecker("Damage Potion", playePotions['damage'])
                 elif "dodge" in playerChoice.lower():
-                    dodgeBoost = random.randint(5,9)
-                    print("You boosted your dodge stat by "+str(dodgeBoost)+" points!")
-                    playerPotions['dodge'] = potionChecker("Dodge Up Potion", playerPotions['dodge'])
-                elif "health" in playerChoice.lower() and "restore" not in playerChoice.lower():
-                    healthBoost = random.randint(5, 15)
-                    if healthBoost >= 13:
-                        healthBoost += random.randint(0,10)
-                    print("You boosted your health by "+str(healthBoost)+" points!")
-                    playerHealth['hp'] += healthBoost
-                    playerPotions['health up'] = potionChecker("Health Up Potion", playerPotions['health up'])
-                elif "restoration" in playerChoice.lower(): 
-                    playerPotions['restoration'] = potionChecker("Restoration Potion", playerPotions['restoration'])
-                elif str(no) in playerChoice.lower() or playerPotions['damage'] == 0 and playerPotions['dodge'] == 0 and playerPotions['health up'] and playerPotions['restoration'] == 0:
+                    if potionOut(potionNamesReal[1]) == True:
+                        playerBoosts["dodge up"] = random.randint(5,9)
+                        print("You boosted your dodge stat by "+str(playerBoosts["dodge up"])+" points!")
+                    playePotions['dodge'] = potionChecker("Dodge Up Potion", playePotions['dodge'])
+                elif "restor" in playerChoice.lower(): 
+                    if potionOut(potionNamesReal[2]) == True:
+                        restor = random.randint(5,15)
+                        if restor >= 13:
+                            restor += random.randint(0,5)
+                        playerHealth['hp'] += restor
+                        print(f"You restored {restor} hp! You now have {playerHealth['hp']} hp!")
+                    playePotions['restoration'] = potionChecker("Restoration Potion", playePotions['restoration'])
+                elif "no" or "n" in playerChoice.lower() or playePotions['damage'] == 0 and playePotions['dodge'] == 0 and playePotions['health up'] and playePotions['restoration'] == 0:
                     print()
             elif "attack" in playerChoice.lower():
                 def attackStuff (x, y):
                     print()
                     for _ in range(x):
-                        playerAttack(damageBoost)
-                    for _ in 1:
-                        enemyAttack(dodgeBoost)
+                        playerAttack(playerBoosts["damage up"])
+                    for _ in range(y):
+                        enemyAttack(playerBoosts["dodge up"])
                     print()
                     dungeonCheckIn()
                 doubleHit = random.randint(1,100)
-                print(doubleHit)
-                print(playerDoubleHitRate["double hit chance"])
-                print(baddieOne['double hit chance'])
                 restoreHealth()
                 if playerDoubleHitRate["double hit chance"] <= doubleHit and baddieOne["double hit chance"] > doubleHit:
                     attackStuff(2, 1)
@@ -230,5 +213,6 @@ def dungeonRun():
                     
         
         dungeonCheckIn()
-                
+
+                    
 dungeonRun()
