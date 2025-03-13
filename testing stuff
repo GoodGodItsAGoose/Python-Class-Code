@@ -1,262 +1,405 @@
-import random as r
-import littleHelpers as lh
+import random
+import time as t
+import Info as i
+import Save as s
 
-item_amount = r.randint(1,4)
+# make enemies harder, but still survivable / add difficulty scaler?
+#update saves
+"""
+ideas:
 
-starters = {
-    1: {1: "I need ", 2: "I would like ", 3: "Please give me "},
-    2: {1: "A ", 2: "Some "},
-    3: {1: "And "},
-    4: {1: " with "}
-}
+rename potions to other things for more depth
 
-food = {
-    1: {1: "single burger", 2: "double burger", 3: "bacon burger"},
-    2: {1: "chicken sandwich", 2: "grilled cheese", 3: "hotdog"},
-    3: {1: "french fries", 2: "onion rings", 3: "chicken nuggets", 4: "garden salad", 5: "chicken wings", 6: "motzarella sticks", 7: "brownie delight", 8: "cookie madness"},
-    4: {1: "fountain drink", 2: "milkshake"},
-    5: {1: "ice cream"}
-}
+add a longer description of fights
+"""
 
-toppings = {
-    1: {1: "pickles", 2: "lettuce", 3: "cheese", 4: "onions", 5: "tomatoes"},
-    2: {1: "ranch", 2: "caesar", 3: "balsamic"},
-    3: {1: "whipped cream", 2: "a cherry"},
-    4: {1: "BBQ ", 2: "buffalo "}
-}
+# prints item name, charges, how many times it can recharges, whether it is being used or not, and its damage boost
+def readItemStats():
+    if i.playerItems["name"] == None:
+        print("You do not have an item equipped at this time.")
+    else:
+        print(f"You currently have a {i.playerItems["name"]} equipped.\nCharges: {i.playerItems["charge"]}\nRecharges: {i.playerItems["recharges"]}\nCurrently using?: {i.playerItemsState}\nDamage:{i.ItemPowers[int(i.playerItemModifier)]["damage"]}\n")
 
-flavors = {
-    1: "vanilla",
-    2: "chocolate",
-    3: "strawberry"
-}
+# resets user's chosen item to none
+def itemReset():
+    i.playerItems["charge"] = None
+    i.playerItems["recharges"] = None
+    i.playerItems["name"] = None
+    i.playerItemsState = False
+    i.playerItemModifier = None
 
-def order_to_order(order_choice):
-    order = input("Input order: ")
-    if "bb" in order or "db" in order or "sb" in order or "cs" in order:
-        num2 = 1
-        lists = topping_stuff(num2)
-        toppings_available = topping_stuff_2(num2)
-        burgers = food[1]
-        cs = food[2]
-        num = 1
-        is_it_okay = []
-        for _ in range(4):
-            if num == 4:
-                order_choice = find_in_order(order_choice, cs[1])
-            else:
-                order_choice = find_in_order(order_choice, burgers[num])
-            num += 1
-        num = 0
-        for _ in range(len(toppings_available)-1):
-            if str(lists[num]) in order:
-                num3 = 0
-                for _ in len(order_choice):
-                    if toppings_available[lists[num]] in order_choice[num3]:
-                        is_it_okay.append(True)
-                    num3 += 1
-                is_it_okay.append(True)
-            else:
-                num += 1
-        print(is_it_okay)
-    elif "gs" in order_choice:
-        dressing = toppings[4]
-        num = 1
-        for _ in range(2):
-            if dressing[num] in order_choice and dressing[num] in order:
-                print(True)
-                if "chicken" in order_choice and "chicken" in order:
-                    print(True) 
-                elif "chicken" in order_choice and "chicken" not in order:
-                    print(False)
-            elif dressing[num] in order_choice and dressing[num] not in order:
-                print(False)
-            else:
-                num += 1
-                
-def find_in_order(order, var_to_find):
-    num = 0
-    for _ in len(order):
-        if var_to_find == order[num]:
-            return num
+# allows the item to be used to fight
+def equipItem():
+    i.playerItemsState = True
+    print(f"You equipped your {i.playerItems["name"]}!\n\n")
+
+# disables the usage of the item to fight
+def unequipItem():
+    i.playerItemsState = False
+    print(f"You unequipped your {i.playerItems["name"]}!\n\n")
+
+# finds the item and stores it in the user's info
+def findItem(itemNumber):
+    i.playerItems["charge"] = i.Items[itemNumber]["charge"]
+    i.playerItems["recharges"] = i.Items[itemNumber]["recharges"]
+    i.playerItems["name"] = i.Items[itemNumber]["name"]
+    i.playerItemModifier = random.randint(1,4)
+
+# returns the damage boost
+def pwr():
+    return i.ItemPowers[int(i.playerItemModifier)]["damage"]
+
+# adds a degrading feature to the item, after a certain amount of time the item will have to recharge and lose a useage level
+# also adds a feature to make the item break, using itemReset
+def itemDegrade():
+    i.playerItems["charge"] -= 1
+    if i.playerItems["charge"] == 0:
+        i.playerItems["recharges"] -= 1
+        if i.playerItems["recharges"] <= 0:
+            print(f"Your {i.playerItems["name"]} broke!\n")
+            itemReset()
+        print("Your item has run out of charges and is now in a recharging state.")
+        i.playerItemsState = False
+        
+# when dormant, the item will recharge. Once recharged, a message will be printed.
+def itemRecharge():
+    i.playerItems["charge"] += 1
+    if i.playerItems["charge"] == 20:
+        print(f"Your {i.playerItems["name"]} has reached its charge limit, with {i.playerItems["recharges"]} recharges left.\n")
+        print("1. Re-equip\n2. Continue the fight\n")
+        choice = input("Your choice: ")
+        if choice == "1":
+            i.playerItemsState = True
+            print("Equipped item.\n")
+        elif choice == "2":
+            pass
         else:
-            num += 1
+            print("Please enter a valid choice.\n")
+            itemRecharge()
+
+# the function for getting an item from killing an enemy
+def replaceItem(a=random.randint(1,4)):
+    itemNumber = a
+    print(f"You found a {i.Items[itemNumber]["name"]}! It has {i.Items[itemNumber]["charge"]} charges left and {i.Items[itemNumber]["recharges"]} recharges left!")
+    print("1. Take it\n2. Leave it\n3. Check your current item's stats\n\nNOTE: If you take the item and you already have an item, the new item will replace the old one.")
+    choice = input("Your choice: ")
+    if choice == "1":
+        findItem(itemNumber)
+    elif choice == "2":
+        pass
+    elif choice == "3":
+        
+        readItemStats()
+        replaceItem(a)
+    else:
+        print("Please enter a valid choice.\n")
+        replaceItem(a)
+
+# full dungeon function, including:
+#   - Enemy information
+#   - Enemy choosing
+#   - potions drinking and obtaining obtaining
+#   - attack process for player and enemy
+#   - restoring health if lower than 15 health
+#   - dungeon check in after every action
+#   - function to turn saved information back to integers
+def dungeonRun():
     
-def topping_stuff(num2):
-    topping = toppings[num2]
-    listies = []
-    num = 1
-    for _ in (range(len(topping))):
-        listies.append(num)
-        num += 1
-    return listies
+		# list of enemies, including its health, damage, dodge chance, double hit chance, double loot (will eventually use or remove) and chance of encountering
+    enemy = {
+        "undead": {"health": random.randint(23,32), "damage": random.randint(2,5), "dodge chance": 13, "double hit chance": 3, "double loot": random.randint(1,4), "chance": 16, "find": 7},
+        "bandit": {"health": random.randint(15, 35), "damage": random.randint(4,7), "dodge chance": random.randint(10,23), "double hit chance": random.randint(12,17), "double loot": random.randint(1,3), "chance": 30, "find": 6}, 
+        "snake": {"health": random.randint(10,15), "damage": random.randint(1,3), "dodge chance": 35, "double hit chance": 18, "double loot": random.randint(1,4), "chance": 45, "find": 10},
+        "undead guard": {"health": random.randint(32,40), "damage": random.randint(6,11), "dodge chance": 17, "double hit chance": random.randint(11,15), "double loot": random.randint(1,2), "chance": 57, "find": 4},
+        "giant spider": {"health": random.randint(20,35), "damage": random.randint(3,6), "dodge chance": random.randint(24,34), "double hit chance": random.randint(11,18), "double loot": random.randint(1,2), "chance": 68, "find": 5},
+        "giant armored spider": {"health": random.randint(28,40), "damage": random.randint(3,7), "dodge chance": random.randint(19,31), "double hit chance": random.randint(11,16), "double loot": random.randint(1,1), "chance": 77, "find": 4},
+        "goblin": {"health": random.randint(10,15), "damage": random.randint(2,5), "dodge chance": random.randint(13,23), "double hit chance": random.randint(13,16), "double loot": random.randint(1,4), "chance": 90, "find": 7},
+        "wizard": {"health": random.randint(32,45), "damage": random.randint(7,14), "dodge chance": random.randint(13,16), "double hit chance": random.randint(11,15), "double loot": random.randint(1,1), "chance": 97, "find": 2},
+        "King's Guard": {"health": random.randint(45,60), "damage": random.randint(13,17), "dodge chance": random.randint(3,7), "double hit chance": random.randint(11,15), "double loot": random.randint(1,1), "chance": 100, "find": 1},
+    }
+    baddie = random.randint(1, 100)
 
-def topping_stuff_2(num2):
-    topping = toppings[num2]
-    listies = []
-    num = 1
-    for _ in (range(len(topping))):
-        listies.append(topping[num])
-        num += 1
-    return listies
 
-# chooses food
-def foodChoice():
-    food_type = r.randint(1,5)
-    foods = food[food_type]
-    food_amount = len(food[food_type])
-    food_choice = foods[r.randint(1, int(food_amount))]
-    return food_choice
+    # enemy chooser
+    if i.between(baddie, 1, enemy["undead"]["chance"]) ==  True:
+        baddieOne = enemy["undead"]
+        baddieName = "Zombie"
+        drops = 1
+    elif i.between(baddie, enemy["undead"]["chance"]+1, enemy["bandit"]['chance']) == True:
+        baddieOne = enemy["bandit"]
+        baddieName = "Bandit"
+        drops =  2
+    elif i.between(baddie, enemy["bandit"]["chance"]+1, enemy["snake"]['chance']) == True:
+        baddieOne = enemy["snake"]
+        baddieName = "Snake"
+        drops = 1
+    elif i.between(baddie, enemy["snake"]["chance"]+1, enemy["undead guard"]['chance']) == True:
+        baddieOne = enemy["undead guard"]
+        baddieName = "Undead Guard"
+        drops = 3
+    elif i.between(baddie, enemy["undead guard"]["chance"]+1, enemy["giant spider"]['chance']) == True:
+        baddieOne = enemy["giant spider"]
+        baddieName = "Giant Spider"
+        drops = 2
+    elif i.between(baddie, enemy["giant spider"]["chance"]+1, enemy["giant armored spider"]['chance']) == True:
+        baddieOne = enemy["giant armored spider"]
+        baddieName = "Giant Armored Spider"
+        drops = 3
+    elif i.between(baddie, enemy["giant armored spider"]["chance"]+1, enemy["goblin"]['chance']) == True:
+        baddieOne = enemy["goblin"]
+        baddieName = "Goblin"
+        drops = 2
+    elif i.between(baddie, enemy["goblin"]["chance"]+1, enemy["wizard"]['chance']) == True:
+        baddieOne = enemy["wizard"]
+        baddieName = "Wizard"
+        drops = 3
+    elif i.between(baddie, enemy["wizard"]["chance"]+1, enemy["King's Guard"]['chance']) == True:
+        baddieOne = enemy["King's Guard"]
+        baddieName = "King's Guard"
+        drops = 4
+    print(f"You came across a {baddieName}!\n")
+    s.updateSave()
+    # general dungeon function
+    
+    dungeonGoing = True
+    while dungeonGoing == True:
+        # checks if player has enough potions
+        def potionChecker(ones, twos):
+            if twos > 0:
+                twos -=  1
+                print(f"You drank 1 {ones}! You have {twos} {ones}s left!\n")
+                return twos
+            print(f"You're out of {ones}s!\n")
 
-# choosing flavors for milkshake/ice cream
-def flavor():
-    flavor = flavors[r.randint(1,3)]
-    return flavor
+        def check(point):
+            num = 0
+            for _ in range(4):
+                if str(num) == point:
+                    return num
+                else:
+                    num += 1
 
-# gets toppings for burgers
-def toppings_for_burgers():
-    amount = r.randint(1,5)
-    topping_list = []
-    toppings_available = toppings[1]
-    num = []
-    for _ in range(amount):
-        check_toppings(num)
-    num1 = 0
-    for _ in range(amount):
-        topping_list.append(toppings_available[num[num1]])
-        num1 += 1
-    new_list = []
-    num = 1
-    length = len(topping_list) - 1
-    num2 = 0
-    # making the topping choices into a sentence
-    new_list.append(" with ")
-    new_list.append(topping_list[0])
-    for _ in range(length):
-        if num2 == length - 1:
-            new_list.append(" and ")
-        else:
-            new_list.append(", ")
-        new_list.append(topping_list[num])
-        num += 1
-        num2 += 1
-    # turning the list into a string
-    listy = new_list
-    sentence = ''.join(listy)
-    return(sentence)
-
-# checking if toppings appear more than once
-def check_toppings(list):
-    num2 = r.randint(1,5)
-    if lh.runThroughList(list, num2) == True:
-        check_toppings(list)
-    else:
-        list.append(num2)
-
-# chooses dressing for salad
-def dressing_for_salad():
-    choice = r.randint(1,3)
-    dressing = toppings[2]
-    dressing_chosen = dressing[choice]
-    return dressing_chosen
+        # checks if player is out of potions (can merge with potionChecker)
         
-# chooses toppings for milkshake
-def toppings_for_milkshake():
-    choice = r.randint(1,2)
-    topping = toppings[3]
-    if choice == 1:
-        topping_choice = " "+ topping[r.randint(1,2)]
-        return topping_choice
-    else:
-        topping_choice = " with whipped cream and a cherry"
-        return topping_choice 
+        def potionOut(potionName):
+            if i.playerPotions[potionName] == "0":
+                return False
+            return True
+        # function for the enemy's attack, including chance of dodging. b is dodge chance boost
+        def enemyAttack(b):
+            dodgeChance = random.randint(1,100)
+            if dodgeChance <= 31 + b:
+                print(f"The {baddieName} swung at you, but you dodged!\n")
+            else:
+                # if the player has 0 or less health and enemy has more than 0 health, the fight will end, player's health will be set to 0 if less than 0
+                if i.playerHealth['hp'] > 0 and baddieOne['health'] > 0:
+                    i.playerHealth["hp"] -= baddieOne["damage"]
 
-# changing 'a' to 'some' when it makes sense
-def a_to_some(food_chosen):
-    if food_chosen == "onion rings" or food_chosen == "french fries" or food_chosen == "chicken wings" or food_chosen == "motzarella sticks":
-        num = "some "
-    else:
-        num = "a "
-    return num
+                    if i.playerHealth['hp'] <= 0:
+                        i.playerHealth['hp'] = 0
+                        print(f"The {baddieName} hit you for {baddieOne['damage']} hp! You died!\n")
+                        i.playerHealth['hp'] = 40
+                        i.playerPotions["damage-pot"] = 0
+                        i.playerPotions["dodge"] = 0
+                        i.playerPotions["restoration"] = 5
+                        itemReset()
+                        s.died()
+                        exit()
+                    else:
+                        print(f"The {baddieName} hit you for {baddieOne['damage']} hp! You have {i.playerHealth['hp']} hp left!")
+        
+        # same concept as enemyAttack, except the opposite for the fight-end condition. a is damage boost
+        
+        def playerAttack(a):
+            dodgeChance = random.randint(1,100)
+            if dodgeChance <= baddieOne['dodge chance']:
+                print(f'You swung at the {baddieName}, but it dodged! It has {baddieOne['health']} hp left!')
+            else:
+                if i.playerHealth['hp'] > 0 and baddieOne['health'] > 0:
+                    if i.playerItems["recharges"] == None or i.playerItemsState == False:
+                        if i.playerItems["recharges"] is not None and i.playerItemsState == False:
+                            itemRecharge()
+                        extraDamage = 0 #have it already set to 0 at the beginning, change if anything changes, find a way to take the item name then find its damage
+                    else:
+                        extraDamage = pwr()
+                        itemDegrade()
+                    
+                    totalDamage = i.playerDamage['damage'] + a + extraDamage
 
-def y_or_n():
-    yorn = r.randint(1,2)
-    if yorn == 1:
-        return True
-
-def replacing(sentence):
-    blah = sentence
-    blah = blah.replace("with", "")
-    blah = blah.replace(",", "")
-    blah = blah.replace("and", "")
-    blah = blah.replace("  ", " ")
-    return blah
-
-# sorting and printing order
-def order_up():
-    count = 1
-    num = 0
-    blah_list = []
-    for _ in range(item_amount):
-        food_chosen = foodChoice()
-        flavor_choice = ""
-        topping_choice = ""
-        if food_chosen == "ice cream":
-            flavor_choice = flavor() + " "
-            if y_or_n() == True:
-                topping_choice = " in a cup"
-        elif "wings" in food_chosen:
-            sauces = toppings[4]
-            flavor_choice = sauces[r.randint(1,2)]
-        elif "burger" in food_chosen or food_chosen == "chicken sandwich":
-            if y_or_n() == True:
-                topping_choice = toppings_for_burgers()
-        elif food_chosen == "milkshake":
-            flavor_choice = flavor() + " "
-            topping_choice = toppings_for_milkshake()
-        elif food_chosen == "french fries" or food_chosen == "nachos":
-            yncheese = r.randint(1,2)
-            if y_or_n() == True:
-                topping_choice = " with cheese"
-        elif food_chosen == 'garden salad':    
-            ynchicken = r.randint(1,2)
-            if ynchicken == 1:
-                topping_choice = " with chicken"
-            flavor_choice = dressing_for_salad() + " "
-        if count == 1:
-            num = a_to_some(food_chosen)
-            choice = r.randint(1,3)
-            # start of order
-            start = starters[1]
-            print(start[choice] + num + flavor_choice + food_chosen + topping_choice + ".")
-            blah = start[choice] + num + " " + flavor_choice + food_chosen + topping_choice + "."
-            blah = replacing(blah)
-            blah = blah.replace(num, "")
-            blah = blah.replace(start[choice], "")
-            blah_list.append(blah)
-        elif count == item_amount:
-            num = a_to_some(food_chosen)
-            # end of order
-            start = starters[3]
-            print(start[1] + num + flavor_choice + food_chosen + topping_choice + ".")
-            blah = start[1] + num + " " + flavor_choice + food_chosen + topping_choice + "."
-            blah = replacing(blah)
-            blah = blah.replace(num, "")
-            blah = blah.replace(start[1], "")
-            blah_list.append(blah)
-        elif count != 1:
-            num = a_to_some(food_chosen)
-            # middle of order
-            print(num.capitalize() + flavor_choice + food_chosen + topping_choice + ".")
-            blah = num.capitalize() + num + " " + flavor_choice + food_chosen + topping_choice + "."
-            blah = replacing(blah)
-            blah = blah.replace(num, "")
-            blah = blah.replace(num.capitalize(), "")
-            blah_list.append(blah)
+                    baddieOne['health'] -= totalDamage
+                    if baddieOne['health'] <= 0:
+                        baddieOne['health'] = 0
+                        drop = i.findAPotion(drops)
+                        if baddieOne["double loot"] == 1:
+                            drop2 = i.findAPotion(drops)
+                            # stack potions if needed, if second part of message is the same, just add the two, seperate them into their seperate words, then do that
+                            drop.split()
+                            drop2.split()
+                            if drop[1] is drop2[1]:
+                                drop = check(drop[0])
+                                drop1 = check(drop2[0])
+                                drop = str(drop+drop1)+" "+drop2[2:]
+                                print(f'You killed the {baddieName}! You got {drop}s!')
+                            else:
+                                print(f'You killed the {baddieName}! You got {drop} and {drop2}!')
+                        else:
+                            print(f'You killed the {baddieName}! You got {drop}!')
+                        find = random.randint(1, baddieOne["find"])
+                        if find == 1:
+                            replaceItem()
+                        
+                        i.playerHealth['hp'] = 40
+                        dungeonRun()
+                    else:
+                        print(f"You hit the {baddieName} for {totalDamage} hp! It now has {baddieOne['health']} hp left!")
         
         
+        # fix so you can say no
+        # appears if player is at 10 or lower HP
+        def restoreHealth():
+            if i.playerHealth['hp'] <= 15:
+                print("\nYou are at low health.\n1. Drink a restoration potion\n2.Continue the fight\n")
+                playerChoice = input("Your choice: ")
+                if playerChoice == "1":
+                    restor = random.randint(5,15)
+                    if restor >= 13:
+                        restor += random.randint(0,5)
+                    i.playerHealth['hp'] += restor
+                    
+                    print(f"You restored {restor} hp! You now have {i.playerHealth['hp']} hp!\n")
+                    i.playerPotions['restoration'] = potionChecker("Restoration Potion", i.playerPotions['restoration'])
+                elif playerChoice == "2":
+                    pass
+                else:
+                    print("Please enter a valid choice\n")
+                    restoreHealth()
+                    
+        # turned the process for drinking potions into a function, checks to see if player has the potions then adds the bonus to
+        # the player's stats, then prints the usage of the potions
+        def drinkPotions():
             
-        count += 1
-    order_to_order(blah_list)
-    return blah_list
-order_up()
+            print(f"You have {i.playerPotions["damage-pot"]} Damage Up potions, {i.playerPotions["dodge"]} Dodge Chance Up potions, and {i.playerPotions["restoration"]} Restoration potions")
+            print("1. Drink a Damage Up Potion\n2. Drink a Dodge Chance Up Potion\n3. Drink a Restoration Potion\n4. Go back to the Attack Menu\n")   
+            print("Note that boosting potions last for 1 attack.\n")
+            playerChoice = input("\n")
+            
+            if playerChoice == "1":
+                if potionOut(i.potionNamesReal[0]) == True:
+                    i.playerBoosts["damage up"] = random.randint(3,6)
+                    print("You boosted your damage by "+str(i.playerBoosts["damage up"])+" points!\n")
+                i.playerPotions['damage-pot'] = int(potionChecker("Damage Potion", i.playerPotions['damage-pot']))
+
+            elif playerChoice == "2":
+                if potionOut(i.potionNamesReal[1]) == True:
+                    i.playerBoosts["dodge up"] = random.randint(5,9)
+                    print("You boosted your dodge stat by "+str(i.playerBoosts["dodge up"])+" points!\n")
+                i.playerPotions['dodge'] = int(potionChecker("Dodge Up Potion", i.playerPotions['dodge']))
+
+            elif playerChoice == "3": 
+                if potionOut(i.potionNamesReal[2]) == True:
+                    restor = random.randint(5,15)
+                    if restor >= 13:
+                        restor += random.randint(0,5)
+                    i.playerHealth['hp'] += restor
+                    print(f"You restored {restor} hp! You now have {i.playerHealth['hp']} hp!\n")
+                i.playerPotions['restoration'] = int(potionChecker("Restoration Potion", i.playerPotions['restoration']))
+                
+            elif playerChoice == "4":
+                dungeonCheckIn()
+
+            else:
+                print("Please enter a valid choice.\n")
+                drinkPotions()
+        
+        # turns information saved from loading the save file
+        def turnInt():
+            i.playerPotions["damage-pot"] = int(i.playerPotions["damage-pot"])
+            i.playerPotions["dodge"] = int(i.playerPotions["dodge"])
+            i.playerPotions["restoration"] = int(i.playerPotions["restoration"])
+            if i.playerItems["name"] == "None" or i.playerItems["name"] is None:
+                pass
+            else:
+                i.playerItems["charge"] = int(i.playerItems["charge"])
+                i.playerItems["recharges"] = int(i.playerItems["recharges"])
+                i.playerItemModifier = int(i.playerItemModifier)
+
+        # appears after each instance of attacking, options are to drink a potion or to attack
+        def dungeonCheckIn():
+            turnInt()
+            print("1. Attack\n2. Drink a potion\n3. Equip or unequip your weapon\n4. Check item\n5. Go to menu\n")
+            playerChoice = input("Your choice: ")
+            # resets boosts to 0
+            i.playerBoosts["damage up"] = 0
+            i.playerBoosts["dodge up"] = 0
+            if playerChoice == "2": #wont allow u to attack
+                drinkPotions()
+            # attack just goes through both enemy and player attacks   
+            elif playerChoice == "1":
+                print()
+                def attackStuff (x, y):
+                    for _ in range(x):
+                        playerAttack(i.playerBoosts["damage up"])
+                    for _ in range(y):
+                        enemyAttack(i.playerBoosts["dodge up"])
+                    print()
+                    dungeonCheckIn()
+                    
+                doubleHit = random.randint(1,100)
+                
+                restoreHealth()
+                
+                #chooses whether player or enemy will have double attacks
+                if i.playerDoubleHitRate["double hit chance"] <= doubleHit and baddieOne["double hit chance"] > doubleHit:
+                    attackStuff(2, 1)
+                elif baddieOne["double hit chance"] <= doubleHit and i.playerDoubleHitRate["double hit chance"] > doubleHit:
+                    attackStuff(1, 2)
+                elif baddieOne["double hit chance"] >= doubleHit and i.playerDoubleHitRate["double hit chance"] >= doubleHit:
+                    attackStuff(2, 2)
+                else:
+                    attackStuff(1, 1)
+            elif playerChoice == "3":
+                if i.playerItemsState == False:
+                    equipItem()
+                else:
+                    unequipItem()
+            elif playerChoice == "4":
+                readItemStats()
+                dungeonCheckIn()
+            elif playerChoice == "5":
+                print()
+                mainScreen()
+            else:
+                print("Please enter a valid choice.\n")
+                dungeonCheckIn()
+                    
+        
+        dungeonCheckIn()
+
+                
+# main menu function
+def mainScreen():
+    print()
+    print("1. Load a save\n2. Create a new save\n3. Continue\n4. Open guide menu\n5. Exit\n\nNOTE: Making a new save will overwrite your old save. It will delete all progress made.")
+    choice = input("Your choice: ")
+    if choice == "1":
+        s.loadSave()
+        print(f"You loaded the previous save.\n")
+        
+        dungeonRun()
+    elif choice == "2":
+        s.newSave()
+        
+        dungeonRun()
+    elif choice == "3":
+        
+        dungeonRun()
+    elif choice == "4":
+        i.guideMenu()
+        mainScreen()
+    elif choice == "5":
+        exit()
+    else:
+        print("Please enter a valid choice.\n")
+        mainScreen()
+
+mainScreen()
